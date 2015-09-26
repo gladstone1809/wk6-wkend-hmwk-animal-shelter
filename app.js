@@ -8,13 +8,16 @@ var expressLayouts = require('express-ejs-layouts');
 var app = express();
 var router = express.Router();
 
-var Pet        = require('./models/animals');
+var Pet = require('./models/animals');
 
 var moongoose = require('mongoose');
-moongoose.connect('mongodb://localhost/animalshelter');
+moongoose.connect('mongodb://localhost/animal-shelter');
 
 app.use(logger('dev'));
+
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json())
+
 app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
 app.engine('ejs', require('ejs').renderFile);
@@ -23,6 +26,37 @@ app.set('view engine', 'ejs');
 app.get('/', function(req, res){
   res.render('blah')
 })
+
+// root path
+app.get("/", function (req, res) {
+  // render index.html
+  // res.sendFile(path.join(__dirname + '/views/index.html'))
+  Pet.find({}, function(err, pets) { //using the find query, make first argument blank to find all, second arg passing a function
+    if (err) console.log(err) // if error comes through,  console the error
+    res.json(pets) // otherwise show all pets
+  })  
+})
+
+//index
+app.get("/animals", function (req, res) {
+  // res.sendFile(path.join(__dirname + '/views/index.html'));
+  
+  Pet.find({}, function(err, pets) { //using the find query, make first argument blank to find all, second arg passing a function
+    if (err) console.log(err) // if error comes through,  console the error
+    res.json(pets) // otherwise show all pets
+  })
+})
+
+app.post("/animals", function (req, res) {
+
+})
+
+app.delete("/animals/:id", function (req, res) {
+
+})
+
+
+
 
 // development error handler
 // will print stacktrace
