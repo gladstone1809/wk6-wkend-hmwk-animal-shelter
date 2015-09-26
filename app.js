@@ -48,12 +48,25 @@ app.get("/animals", function (req, res) {
 })
 
 app.post("/animals", function (req, res) {
-
+  console.log(req.body);
+  var pet = Pet({
+    name: req.body.name,
+    breed: req.body.breed,
+    dob: req.body.dob,
+    gender: req.body.gender,
+    family: req.body.family,
+    status: req.body.status
+  })
+  pet.save(function(error){
+    if (error) console.log(error)
+    console.log("Saved animal")
+  })
 })
 
-app.delete("/animals/:id", function (req, res) {
 
-})
+// app.delete("/animals/:id", function (req, res) {
+
+// })
 
 
 
