@@ -22,25 +22,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
 app.engine('ejs', require('ejs').renderFile);
 app.set('view engine', 'ejs');
-
-app.get('/', function(req, res){
-  res.render('blah')
-})
+app.use(express.static(__dirname)); // wtf does this do??
 
 // root path
 app.get("/", function (req, res) {
-  // render index.html
-  // res.sendFile(path.join(__dirname + '/views/index.html'))
-  Pet.find({}, function(err, pets) { //using the find query, make first argument blank to find all, second arg passing a function
-    if (err) console.log(err) // if error comes through,  console the error
-    res.json(pets) // otherwise show all pets
-  })  
-})
+  res.render(path.join(__dirname + '/views/index.ejs'))
+  })
 
 //index
 app.get("/animals", function (req, res) {
-  // res.sendFile(path.join(__dirname + '/views/index.html'));
-  
   Pet.find({}, function(err, pets) { //using the find query, make first argument blank to find all, second arg passing a function
     if (err) console.log(err) // if error comes through,  console the error
     res.json(pets) // otherwise show all pets
@@ -57,19 +47,30 @@ app.post("/animals", function (req, res) {
     family: req.body.family,
     status: req.body.status
   })
-  pet.save(function(error){
+  pet.save(function(error, createdPet){
     if (error) console.log(error)
     console.log("Saved animal")
+    res.json([createdPet])
   })
 })
 
+app.delete("/animals/:id", function (req, res) {
+  console.log(req.params.id);
+  Pet.remove({_id: req.params.id}, function(err, removedPet){
+      console.log("DELETE ROUTE");
+      if (err) console.log(err);
+      res.json(removedPet)
+  })
+})
 
-// app.delete("/animals/:id", function (req, res) {
-
-// })
-
-
-
+app.put("/animals/:id", function (req, res) {
+  console.log(req.params.id);
+  Pet.update({_id: req.params.id}, {status: req.params.status}, function(err, updatedPet){
+      console.log("UPDATED");
+      if (err) console.log(err);
+      res.json(updatedPet)
+    })
+})
 
 // development error handler
 // will print stacktrace
